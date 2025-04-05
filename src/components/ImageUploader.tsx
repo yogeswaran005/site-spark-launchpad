@@ -45,6 +45,11 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onImageUpload }) => {
     // Pass file to parent
     onImageUpload(file);
     
+    toast({
+      title: "Image uploaded",
+      description: "Your image is ready for analysis",
+    });
+    
     return () => URL.revokeObjectURL(objectUrl);
   }, [onImageUpload, toast]);
 

@@ -7,7 +7,7 @@ import StyleRecommendations, { Recommendations } from '@/components/StyleRecomme
 import HowItWorks from '@/components/HowItWorks';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
-import { Undo2 } from 'lucide-react';
+import { Undo2, Image } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 import { getMockRecommendations, UPLOADED_IMAGE_PATH } from '@/utils/mockRecommendations';
@@ -16,11 +16,13 @@ const Index = () => {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [recommendations, setRecommendations] = useState<Recommendations | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAnalyzed, setIsAnalyzed] = useState<boolean>(false);
   const { toast } = useToast();
 
   const handleImageUpload = (file: File) => {
     setUploadedImage(file);
     setRecommendations(null);
+    setIsAnalyzed(false);
   };
 
   const analyzeImage = async () => {
@@ -34,24 +36,41 @@ const Index = () => {
     }
 
     setIsLoading(true);
-
-    // Simulate API call delay
-    setTimeout(() => {
-      // Get mock recommendations
-      const mockData = getMockRecommendations();
-      setRecommendations(mockData);
+    
+    try {
+      // Log image details to console for debugging
+      console.log("Analyzing image:", uploadedImage.name, uploadedImage.type, uploadedImage.size);
+      
+      // Simulate image analysis with a longer loading time to mimic real analysis
+      // In a real implementation, you would send the image to a backend API for processing
+      setTimeout(() => {
+        // Get mock recommendations based on the image
+        const mockData = getMockRecommendations();
+        setRecommendations(mockData);
+        setIsLoading(false);
+        setIsAnalyzed(true);
+        
+        toast({
+          title: "Analysis complete",
+          description: "We've generated style recommendations for your image",
+        });
+      }, 2500);
+    } catch (error) {
+      console.error("Error analyzing image:", error);
       setIsLoading(false);
       
       toast({
-        title: "Analysis complete",
-        description: "We've generated style recommendations for your image",
+        title: "Analysis failed",
+        description: "There was a problem analyzing your image. Please try again.",
+        variant: "destructive",
       });
-    }, 2000);
+    }
   };
 
   const resetAnalysis = () => {
     setUploadedImage(null);
     setRecommendations(null);
+    setIsAnalyzed(false);
   };
 
   return (
@@ -68,7 +87,7 @@ const Index = () => {
       <main className="flex-1 py-16 px-4">
         <div className="container mx-auto">
           <div id="upload-section" className="max-w-4xl mx-auto">
-            {!recommendations ? (
+            {!isAnalyzed ? (
               <>
                 <h2 className="text-2xl md:text-3xl font-bold text-center mb-8 text-gray-dark">
                   Upload Your Clothing Image
@@ -79,9 +98,20 @@ const Index = () => {
                   <div className="mt-8 text-center">
                     <Button 
                       onClick={analyzeImage}
-                      className="bg-teal hover:bg-teal/90 text-white px-8 py-6"
+                      className="bg-teal hover:bg-teal/90 text-white px-8 py-6 flex items-center gap-2"
+                      disabled={isLoading}
                     >
-                      Analyze Style
+                      {isLoading ? (
+                        <>
+                          <div className="h-4 w-4 rounded-full border-2 border-t-transparent border-white animate-spin mr-2"></div>
+                          Analyzing Style...
+                        </>
+                      ) : (
+                        <>
+                          <Image className="h-5 w-5 mr-1" />
+                          Analyze Style
+                        </>
+                      )}
                     </Button>
                   </div>
                 )}

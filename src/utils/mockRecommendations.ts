@@ -1,3 +1,4 @@
+
 import { Recommendations } from '@/components/StyleRecommendations';
 
 // Demo image for the uploaded image that has been saved in public
@@ -103,7 +104,7 @@ export const getMockRecommendations = (): Recommendations => {
       },
       {
         id: 'o4',
-        name: "Friend's Gathering", // Changed to double quotes to handle the apostrophe
+        name: "Friend's Gathering", // Using double quotes to handle the apostrophe
         description: 'Perfect for social casual meetups',
         imageUrl: 'https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=1169&auto=format&fit=crop'
       },
